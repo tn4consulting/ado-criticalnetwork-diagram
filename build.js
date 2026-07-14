@@ -4,14 +4,14 @@
  * --------
  * Step 2 of the pipeline: bundles the split dev sources (src/index.html,
  * src/styles.css, src/app.js) plus a data file into a single, standalone
- * public/index.html that can be opened directly (file://, no server),
+ * docs/index.html that can be opened directly (file://, no server),
  * emailed/shared as one file, or published via GitHub Pages — same as the
  * original monolithic version, but now generated instead of hand-maintained.
  *
- *   fetch_epics.js  -->  epics.json  -->  build.js  -->  public/index.html
+ *   fetch_epics.js  -->  epics.json  -->  build.js  -->  docs/index.html
  *
  * USAGE
- *   node build.js                              # uses epics.json, writes public/index.html
+ *   node build.js                              # uses epics.json, writes docs/index.html
  *   node build.js --data other.json --out dist/report.html
  *   npm run build
  */
@@ -32,7 +32,7 @@ const GENERATED_BANNER = (dataName) => (
 );
 
 function parseArgs(argv) {
-  const args = { data: path.join(ROOT, 'epics.json'), out: path.join(ROOT, 'public', 'index.html') };
+  const args = { data: path.join(ROOT, 'epics.json'), out: path.join(ROOT, 'docs', 'index.html') };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--data') args.data = path.resolve(argv[++i]);
