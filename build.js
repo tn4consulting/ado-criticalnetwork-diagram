@@ -4,14 +4,14 @@
  * --------
  * Step 2 of the pipeline: bundles the split dev sources (src/index.html,
  * src/styles.css, src/app.js) plus a data file into a single, standalone
- * epic-network.html that can be opened directly (file://, no server) or
- * emailed/shared as one file — same as the original monolithic version, but
- * now generated instead of hand-maintained.
+ * public/index.html that can be opened directly (file://, no server),
+ * emailed/shared as one file, or published via GitHub Pages — same as the
+ * original monolithic version, but now generated instead of hand-maintained.
  *
- *   fetch_epics.js  -->  epics.json  -->  build.js  -->  epic-network.html
+ *   fetch_epics.js  -->  epics.json  -->  build.js  -->  public/index.html
  *
  * USAGE
- *   node build.js                              # uses epics.json, writes epic-network.html
+ *   node build.js                              # uses epics.json, writes public/index.html
  *   node build.js --data other.json --out dist/report.html
  *   npm run build
  */
@@ -32,7 +32,7 @@ const GENERATED_BANNER = (dataName) => (
 );
 
 function parseArgs(argv) {
-  const args = { data: path.join(ROOT, 'epics.json'), out: path.join(ROOT, 'epic-network.html') };
+  const args = { data: path.join(ROOT, 'epics.json'), out: path.join(ROOT, 'public', 'index.html') };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--data') args.data = path.resolve(argv[++i]);
@@ -67,6 +67,7 @@ function main() {
 
   html = html.replace('<!DOCTYPE html>\n', `<!DOCTYPE html>\n${GENERATED_BANNER(path.basename(args.data))}`);
 
+  fs.mkdirSync(path.dirname(args.out), { recursive: true });
   fs.writeFileSync(args.out, html);
   console.log(`Bundled ${(data.epics || []).length} epics from ${path.basename(args.data)} -> ${args.out}`);
 }
