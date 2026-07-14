@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helios Programme · Epic Critical Path Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="loadingState">Loading epics…</div>
+<div id="errorState"></div>
+
+<div id="app" style="display:none;">
+
+  <header>
+    <div class="eyebrow">Azure DevOps · Epic Dependency Map</div>
+    <h1>Helios Transformation Programme <span>— critical path network</span></h1>
+    <div class="stats-row" id="statsRow"></div>
+  </header>
+
+  <div class="toolbar">
+    <div class="view-switch" id="viewSwitch">
+      <button class="active" data-view="network">Network</button>
+      <button data-view="gantt">Gantt</button>
+      <button data-view="tree">Tree</button>
+    </div>
+    <div class="zoom-wrap" id="zoomWrap">
+      <button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+      <input type="range" id="zoomSlider" min="20" max="200" step="5" value="100" aria-label="Zoom level">
+      <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+      <span id="zoomLabel" class="mono">100%</span>
+      <button id="zoomFit" title="Fit diagram to window">Fit</button>
+    </div>
+    <div class="toggle-wrap">
+      <span id="critLabel">Critical path only</span>
+      <div class="switch" id="critToggle"></div>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-bar-top">
+      <div class="view-switch" id="filterTypeSwitch">
+        <button class="active" data-filter="ws">Workstream</button>
+        <button data-filter="project">Project</button>
+        <button data-filter="theme">Theme</button>
+        <button data-filter="tag">Tags</button>
+      </div>
+      <div class="filter-actions">
+        <button id="selectAllChips">Select all</button>
+        <button id="deselectAllChips">Deselect all</button>
+      </div>
+    </div>
+    <div class="filter-group active" data-filter-group="ws">
+      <div class="chip-group" id="wsFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="project">
+      <div class="chip-group" id="projFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="theme">
+      <div class="chip-group" id="themeFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="tag">
+      <div class="chip-group" id="tagFilters"></div>
+    </div>
+  </div>
+
+  <div id="networkView">
+    <div id="canvas-wrap">
+      <svg id="net" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#33455B"></path>
+          </marker>
+          <marker id="arrowCritical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#F5A623"></path>
+          </marker>
+        </defs>
+        <g id="edgeLayer"></g>
+        <g id="nodeLayer"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="ganttView">
+    <div id="ganttHeader">
+      <div class="gantt-label-header">Epic</div>
+      <div class="gantt-scroll-header" id="ganttScrollHeader">
+        <svg id="ganttAxis" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+    <div id="ganttBody">
+      <div class="gantt-labels">
+        <svg id="ganttLabels" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="gantt-timeline-scroll" id="ganttTimelineScroll">
+        <svg id="ganttTimeline" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowGantt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#33455B"></path>
+            </marker>
+            <marker id="arrowGanttCritical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#F5A623"></path>
+            </marker>
+          </defs>
+          <g id="ganttGridLayer"></g>
+          <g id="ganttLinkLayer"></g>
+          <g id="ganttBarLayer"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="treeView">
+    <div id="tree-canvas-wrap">
+      <svg id="treeNet" xmlns="http://www.w3.org/2000/svg">
+        <g id="treeEdgeLayer"></g>
+        <g id="treeNodeLayer"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="grp">
+      <span style="color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;font-size:10px;">Status</span>
+      <div class="item"><span class="sw" style="background:var(--done)"></span>Done</div>
+      <div class="item"><span class="sw" style="background:var(--progress)"></span>In progress</div>
+      <div class="item"><span class="sw" style="background:var(--notstarted)"></span>Not started</div>
+      <div class="item"><span class="sw" style="background:var(--blocked)"></span>Blocked</div>
+    </div>
+    <div class="sep"></div>
+    <div class="grp">
+      <div class="item"><span class="line"></span>Critical path (zero slack)</div>
+      <div class="item"><span class="line xproj"></span>Cross-project link</div>
+    </div>
+    <div class="sep"></div>
+    <div class="grp" style="color:var(--text-mute);">Click a node to trace its connections (dependency chain, or parent/child in Tree view) · hover for details</div>
+  </div>
+
+  <div class="data-note" id="dataNote">Rendering epics…</div>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<!--
+  GENERATED FILE — do not hand-edit.
+  Source lives in src/index.html, src/styles.css, src/app.js and epics.json.
+  Regenerate with: node build.js
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helios Programme · Epic Critical Path Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1017;
+  --panel:#121924;
+  --panel-2:#161F2C;
+  --grid:#19222E;
+  --border:#26313F;
+  --border-soft:#1D2733;
+  --text:#E8EDF4;
+  --text-dim:#93A3B8;
+  --text-mute:#5D6E82;
+  --amber:#F5A623;
+  --amber-dim:rgba(245,166,35,0.16);
+  --done:#3DDC97;
+  --progress:#4EA1F5;
+  --notstarted:#5B6B80;
+  --blocked:#E8546B;
+  --ws-plat:#7C9CBF;
+  --ws-data:#C98A4B;
+  --ws-port:#8E7CC3;
+  --ws-pay:#4FB0A5;
+  --ws-rpt:#B3B25A;
+  --ws-dec:#8A8F98;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100%;overflow:hidden;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+#app{display:flex;flex-direction:column;height:100vh;}
+
+/* ---------- HEADER ---------- */
+header{
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%);
+  padding:18px 28px 14px;
+  flex-shrink:0;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.14em;
+  color:var(--amber);
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:6px;height:6px;background:var(--amber);border-radius:50%;box-shadow:0 0 8px var(--amber);}
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:22px;
+  margin:4px 0 14px;
+  letter-spacing:.01em;
+}
+h1 span{color:var(--text-dim);font-weight:500;}
+
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;}
+.stat{
+  background:var(--panel-2);
+  border:1px solid var(--border-soft);
+  border-radius:6px;
+  padding:8px 14px;
+  min-width:118px;
+}
+.stat .val{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;line-height:1.1;}
+.stat .lbl{font-size:10px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.stat.warn .val{color:var(--blocked);}
+.stat.crit .val{color:var(--amber);}
+
+/* ---------- TOOLBAR ---------- */
+.toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 28px;border-bottom:1px solid var(--border);
+  background:var(--panel);flex-shrink:0;flex-wrap:wrap;gap:10px;
+}
+.filter-bar{
+  display:flex;flex-direction:column;gap:6px;
+  padding:8px 28px;border-bottom:1px solid var(--border);
+  background:var(--panel);flex-shrink:0;
+}
+.filter-group{display:none;gap:8px;align-items:center;flex-wrap:wrap;}
+.filter-group.active{display:flex;}
+.filter-bar-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.filter-actions{display:flex;gap:6px;flex-shrink:0;}
+.filter-actions button{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  border:1px solid var(--border);background:transparent;color:var(--text-dim);
+  padding:5px 10px;border-radius:20px;cursor:pointer;transition:all .15s ease;
+}
+.filter-actions button:hover{border-color:var(--text-dim);color:var(--text);}
+.filter-label{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-mute);
+}
+.chip-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.chip{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  border:1px solid var(--border);
+  background:transparent;color:var(--text-dim);
+  padding:5px 10px;border-radius:20px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:all .15s ease;user-select:none;
+}
+.chip:hover{border-color:var(--text-dim);color:var(--text);}
+.chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.chip.active{background:rgba(255,255,255,0.06);color:var(--text);border-color:currentColor;}
+.chip.off{opacity:.35;}
+
+.view-switch{
+  display:flex;border:1px solid var(--border);border-radius:20px;padding:2px;gap:2px;flex-shrink:0;
+}
+.view-switch button{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;
+  background:transparent;border:none;color:var(--text-dim);
+  padding:5px 14px;border-radius:16px;cursor:pointer;transition:all .15s ease;
+}
+.view-switch button.active{background:var(--amber-dim);color:var(--amber);}
+.view-switch button:hover:not(.active){color:var(--text);}
+
+/* ---------- ZOOM ---------- */
+.zoom-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.zoom-wrap.hidden{display:none;}
+.zoom-wrap button{
+  font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1;
+  border:1px solid var(--border);background:transparent;color:var(--text-dim);
+  width:22px;height:22px;border-radius:5px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;
+}
+.zoom-wrap button:hover{border-color:var(--text-dim);color:var(--text);}
+.zoom-wrap button#zoomFit{width:auto;padding:0 9px;font-size:11px;letter-spacing:.03em;}
+.zoom-wrap input[type="range"]{width:96px;accent-color:var(--amber);cursor:pointer;}
+.zoom-wrap #zoomLabel{font-size:11px;color:var(--text-dim);width:36px;text-align:center;flex-shrink:0;}
+
+.toggle-wrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-dim);}
+.switch{
+  width:34px;height:18px;border-radius:20px;background:var(--border);
+  position:relative;cursor:pointer;transition:background .15s ease;flex-shrink:0;
+}
+.switch::after{
+  content:"";position:absolute;width:14px;height:14px;border-radius:50%;
+  background:var(--text-dim);top:2px;left:2px;transition:all .15s ease;
+}
+.switch.on{background:var(--amber-dim);}
+.switch.on::after{left:18px;background:var(--amber);}
+
+/* ---------- CANVAS ---------- */
+#canvas-wrap, #tree-canvas-wrap{
+  flex:1;overflow:auto;position:relative;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:36px 36px;
+}
+svg#net, svg#treeNet{display:block;}
+
+.node-card{
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  height:100%;width:100%;
+  padding:9px 10px 8px 11px;
+  font-family:'Inter',sans-serif;
+  position:relative;
+  cursor:pointer;
+  transition:opacity .2s ease, border-color .2s ease, box-shadow .2s ease;
+  overflow:hidden;
+}
+.node-card .ws-bar{position:absolute;left:0;top:0;bottom:0;width:4px;}
+.node-card .row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:5px;}
+.node-card .eid{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mute);}
+.node-card .ptag{
+  display:inline-block;background:var(--border-soft);color:var(--text-dim);
+  border-radius:3px;padding:1px 4px;font-size:9px;letter-spacing:.03em;margin-right:1px;
+}
+.node-card .title{
+  font-size:12.5px;font-weight:600;line-height:1.28;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-bottom:6px;
+}
+.badge{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.03em;
+  padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0;text-transform:uppercase;
+}
+.badge.done{background:rgba(61,220,151,.14);color:var(--done);}
+.badge.progress{background:rgba(78,161,245,.14);color:var(--progress);}
+.badge.notstarted{background:rgba(91,107,128,.18);color:var(--text-dim);}
+.badge.blocked{background:rgba(232,84,106,.16);color:var(--blocked);}
+
+.progress-track{height:4px;background:var(--border-soft);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.progress-fill{height:100%;border-radius:3px;}
+.node-card .meta{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-mute);}
+.node-card .slack{font-size:9.5px;font-family:'IBM Plex Mono',monospace;}
+
+/* ---------- LEVEL OF DETAIL ----------
+   Network/Tree zoom scales the whole SVG uniformly (see applyZoom() in
+   app.js), so card text shrinks geometrically as you zoom out — it would
+   go illegible well before the layout became fully readable. #app's
+   data-lod attribute (set from the current zoom %) trades detail for
+   legibility instead: drop secondary fields first, then enlarge what's
+   left, so the card stays identifiable for as long as possible. */
+#app[data-lod="1"] .node-card .meta-progress,
+#app[data-lod="2"] .node-card .meta-progress,
+#app[data-lod="3"] .node-card .meta-progress{display:none;}
+#app[data-lod="1"] .node-card .title{font-size:16px;}
+#app[data-lod="1"] .node-card .eid{font-size:12px;}
+
+#app[data-lod="2"] .node-card .progress-track,
+#app[data-lod="2"] .node-card .meta-dates,
+#app[data-lod="3"] .node-card .progress-track,
+#app[data-lod="3"] .node-card .meta-dates{display:none;}
+#app[data-lod="2"] .node-card .title{font-size:21px;}
+#app[data-lod="2"] .node-card .eid{font-size:15px;}
+#app[data-lod="2"] .node-card .badge{font-size:13px;padding:3px 8px;}
+#app[data-lod="2"] .node-card .row-top{margin-bottom:10px;}
+
+#app[data-lod="3"] .node-card .badge,
+#app[data-lod="3"] .node-card .eid{display:none;}
+#app[data-lod="3"] .node-card .title{font-size:32px;font-weight:700;-webkit-line-clamp:3;}
+#app[data-lod="3"] .node-card{padding:16px 12px 12px 18px;}
+
+#app[data-lod="2"] .edge, #app[data-lod="2"] .tree-link,
+#app[data-lod="3"] .edge, #app[data-lod="3"] .tree-link{stroke-width:3px;}
+#app[data-lod="3"] .flow-dot{display:none;}
+
+.node.dimmed .node-card, .tree-node.dimmed .node-card{opacity:.18;}
+.node.critical .node-card, .tree-node.critical .node-card{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber-dim), 0 0 14px rgba(245,166,35,.18);}
+.node.selected .node-card, .tree-node.selected .node-card{border-color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.4);}
+
+.edge{fill:none;stroke:#33455B;stroke-width:1.6;transition:opacity .2s ease;}
+.edge.critical{stroke:var(--amber);stroke-width:2.6;filter:drop-shadow(0 0 3px rgba(245,166,35,.5));}
+.edge.dimmed{opacity:.08;}
+.edge.highlighted{stroke:#fff;opacity:1;}
+/* A dependency/hierarchy link whose two endpoints live in different ADO
+   projects — dashed so cross-project structure reads at a glance instead
+   of looking identical to an in-project link. */
+.edge.xproj, .gantt-link.xproj, .tree-link.xproj{stroke-dasharray:5 3;}
+
+.flow-dot{fill:var(--amber);filter:drop-shadow(0 0 4px var(--amber));}
+
+/* Tree view links are a structural parent/child relationship, not a
+   dependency flow — same visual weight as .edge but no arrowheads or
+   animated flow dots, so it doesn't read as "critical path". */
+.tree-link{fill:none;stroke:#33455B;stroke-width:1.6;transition:opacity .2s ease;}
+.tree-link.dimmed{opacity:.08;}
+.tree-link.highlighted{stroke:#fff;opacity:1;}
+
+/* ---------- TREE ---------- */
+#treeView{flex:1;display:none;flex-direction:column;overflow:hidden;background:var(--bg);}
+
+/* Theme cards are a lighter-weight node — dashed border and no status
+   badge/progress bar, since a theme isn't a scheduled work item. */
+.theme-card{display:flex;flex-direction:column;justify-content:space-between;border-style:dashed;}
+.theme-card .row-top{margin-bottom:8px;}
+.theme-card .eid{letter-spacing:.08em;}
+.theme-card .title{-webkit-line-clamp:3;margin-bottom:0;}
+
+/* ---------- GANTT ---------- */
+#ganttView{flex:1;display:none;flex-direction:column;overflow:hidden;background:var(--bg);}
+#ganttHeader{display:flex;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--panel);}
+.gantt-label-header{
+  width:280px;flex-shrink:0;display:flex;align-items:center;padding:0 14px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-mute);
+  text-transform:uppercase;border-right:1px solid var(--border);
+}
+.gantt-scroll-header{flex:1;overflow:hidden;}
+#ganttBody{flex:1;display:flex;overflow-y:auto;overflow-x:hidden;}
+.gantt-labels{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--panel);}
+.gantt-timeline-scroll{flex:1;overflow-x:auto;overflow-y:hidden;}
+
+.gantt-group-row rect.grp-bg{fill:var(--panel-2);}
+.gantt-group-row text{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+}
+.gantt-label-row text.gname{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;fill:var(--text);}
+.gantt-label-row text.geid{font-family:'IBM Plex Mono',monospace;font-size:9.5px;fill:var(--text-mute);}
+.gantt-label-row.dimmed text{opacity:.25;}
+.gantt-label-row{cursor:pointer;}
+.gantt-label-row rect.rowbg{fill:transparent;}
+.gantt-label-row:hover rect.rowbg{fill:var(--panel-2);}
+
+.gantt-gridline{stroke:var(--grid);stroke-width:1;}
+.gantt-gridline.month{stroke:var(--border);}
+.gantt-month-label{font-family:'IBM Plex Mono',monospace;font-size:10px;fill:var(--text-dim);}
+.gantt-row-stripe{fill:var(--panel);opacity:.4;}
+.gantt-row-stripe.alt{fill:transparent;}
+
+.gantt-bar-group{cursor:pointer;transition:opacity .2s ease;}
+.gantt-bar-group.dimmed{opacity:.15;}
+.gantt-bar-track{fill:var(--border-soft);rx:4;}
+.gantt-bar-fill{rx:4;}
+.gantt-bar-outline{fill:none;stroke:var(--border);stroke-width:1.2;rx:4;}
+.gantt-bar-group.critical .gantt-bar-outline{stroke:var(--amber);stroke-width:2;filter:drop-shadow(0 0 3px rgba(245,166,35,.45));}
+.gantt-bar-group.selected .gantt-bar-outline{stroke:#fff;stroke-width:2;}
+.gantt-bar-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;fill:var(--text-dim);}
+
+.gantt-link{fill:none;stroke:#33455B;stroke-width:1.4;transition:opacity .2s ease;}
+.gantt-link.critical{stroke:var(--amber);stroke-width:2.2;filter:drop-shadow(0 0 3px rgba(245,166,35,.4));}
+.gantt-link.dimmed{opacity:.08;}
+.gantt-link.highlighted{stroke:#fff;opacity:1;}
+
+/* ---------- LEGEND ---------- */
+.legend{
+  display:flex;gap:20px;padding:10px 28px;border-top:1px solid var(--border);
+  background:var(--panel);font-size:11px;color:var(--text-dim);flex-wrap:wrap;flex-shrink:0;
+}
+.legend .grp{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.legend .item{display:flex;align-items:center;gap:5px;}
+.legend .sw{width:10px;height:10px;border-radius:3px;}
+.legend .line{width:18px;height:2px;background:var(--amber);box-shadow:0 0 3px var(--amber);}
+.legend .line.xproj{width:18px;height:0;background:none;border-top:2px dashed var(--text-dim);box-shadow:none;}
+.legend .sep{width:1px;height:14px;background:var(--border);}
+
+/* ---------- TOOLTIP ---------- */
+#tooltip{
+  position:fixed;pointer-events:none;z-index:50;
+  background:#0E141C;border:1px solid var(--amber);border-radius:8px;
+  padding:12px 14px;width:270px;font-size:12px;
+  box-shadow:0 12px 32px rgba(0,0,0,.5);
+  opacity:0;transition:opacity .12s ease;
+}
+#tooltip.show{opacity:1;}
+#tooltip h4{margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text);}
+#tooltip .tt-row{display:flex;justify-content:space-between;margin:3px 0;color:var(--text-dim);}
+#tooltip .tt-row b{color:var(--text);font-weight:500;font-family:'IBM Plex Mono',monospace;font-size:11px;}
+#tooltip .tt-deps{margin-top:8px;padding-top:8px;border-top:1px solid var(--border-soft);color:var(--text-mute);font-size:11px;line-height:1.5;}
+
+.data-note{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mute);
+  padding:6px 28px;background:var(--bg);border-top:1px solid var(--border-soft);flex-shrink:0;
+}
+.data-note b{color:var(--amber);}
+
+/* ---------- LOADING / ERROR ---------- */
+#loadingState, #errorState{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;color:var(--text-dim);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;
+}
+#errorState{display:none;color:var(--blocked);white-space:pre-wrap;padding:0 40px;text-align:center;}
+
+</style>
+</head>
+<body>
+
+<div id="loadingState">Loading epics…</div>
+<div id="errorState"></div>
+
+<div id="app" style="display:none;">
+
+  <header>
+    <div class="eyebrow">Azure DevOps · Epic Dependency Map</div>
+    <h1>Helios Transformation Programme <span>— critical path network</span></h1>
+    <div class="stats-row" id="statsRow"></div>
+  </header>
+
+  <div class="toolbar">
+    <div class="view-switch" id="viewSwitch">
+      <button class="active" data-view="network">Network</button>
+      <button data-view="gantt">Gantt</button>
+      <button data-view="tree">Tree</button>
+    </div>
+    <div class="zoom-wrap" id="zoomWrap">
+      <button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+      <input type="range" id="zoomSlider" min="20" max="200" step="5" value="100" aria-label="Zoom level">
+      <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+      <span id="zoomLabel" class="mono">100%</span>
+      <button id="zoomFit" title="Fit diagram to window">Fit</button>
+    </div>
+    <div class="toggle-wrap">
+      <span id="critLabel">Critical path only</span>
+      <div class="switch" id="critToggle"></div>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-bar-top">
+      <div class="view-switch" id="filterTypeSwitch">
+        <button class="active" data-filter="ws">Workstream</button>
+        <button data-filter="project">Project</button>
+        <button data-filter="theme">Theme</button>
+        <button data-filter="tag">Tags</button>
+      </div>
+      <div class="filter-actions">
+        <button id="selectAllChips">Select all</button>
+        <button id="deselectAllChips">Deselect all</button>
+      </div>
+    </div>
+    <div class="filter-group active" data-filter-group="ws">
+      <div class="chip-group" id="wsFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="project">
+      <div class="chip-group" id="projFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="theme">
+      <div class="chip-group" id="themeFilters"></div>
+    </div>
+    <div class="filter-group" data-filter-group="tag">
+      <div class="chip-group" id="tagFilters"></div>
+    </div>
+  </div>
+
+  <div id="networkView">
+    <div id="canvas-wrap">
+      <svg id="net" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#33455B"></path>
+          </marker>
+          <marker id="arrowCritical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#F5A623"></path>
+          </marker>
+        </defs>
+        <g id="edgeLayer"></g>
+        <g id="nodeLayer"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="ganttView">
+    <div id="ganttHeader">
+      <div class="gantt-label-header">Epic</div>
+      <div class="gantt-scroll-header" id="ganttScrollHeader">
+        <svg id="ganttAxis" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+    <div id="ganttBody">
+      <div class="gantt-labels">
+        <svg id="ganttLabels" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="gantt-timeline-scroll" id="ganttTimelineScroll">
+        <svg id="ganttTimeline" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowGantt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#33455B"></path>
+            </marker>
+            <marker id="arrowGanttCritical" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#F5A623"></path>
+            </marker>
+          </defs>
+          <g id="ganttGridLayer"></g>
+          <g id="ganttLinkLayer"></g>
+          <g id="ganttBarLayer"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="treeView">
+    <div id="tree-canvas-wrap">
+      <svg id="treeNet" xmlns="http://www.w3.org/2000/svg">
+        <g id="treeEdgeLayer"></g>
+        <g id="treeNodeLayer"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="grp">
+      <span style="color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;font-size:10px;">Status</span>
+      <div class="item"><span class="sw" style="background:var(--done)"></span>Done</div>
+      <div class="item"><span class="sw" style="background:var(--progress)"></span>In progress</div>
+      <div class="item"><span class="sw" style="background:var(--notstarted)"></span>Not started</div>
+      <div class="item"><span class="sw" style="background:var(--blocked)"></span>Blocked</div>
+    </div>
+    <div class="sep"></div>
+    <div class="grp">
+      <div class="item"><span class="line"></span>Critical path (zero slack)</div>
+      <div class="item"><span class="line xproj"></span>Cross-project link</div>
+    </div>
+    <div class="sep"></div>
+    <div class="grp" style="color:var(--text-mute);">Click a node to trace its connections (dependency chain, or parent/child in Tree view) · hover for details</div>
+  </div>
+
+  <div class="data-note" id="dataNote">Rendering epics…</div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>window.__EPICS_DATA__ = {"source":{"org":"mcroker","projects":["bdm","BDM","BAD","DECD","BDM2","TPLAT"],"generatedAt":"2026-07-14 13:05Z"},"projects":{"bdm":{"label":"bdm","parent":null},"BDM":{"label":"BDM","parent":null},"BAD":{"label":"Benefit Delivery","parent":"BDM"},"DECD":{"label":"Digital","parent":"BDM"},"BDM2":{"label":"Common Platform","parent":"BDM"},"TPLAT":{"label":"Technology Platform","parent":"BDM"}},"workstreams":{"Core Platform":{"label":"Core Platform","color":"#7C9CBF"},"Data Migration":{"label":"Data Migration","color":"#C98A4B"},"Customer Portal":{"label":"Customer Portal","color":"#8E7CC3"},"Payments":{"label":"Payments","color":"#4FB0A5"},"Reporting and Analytics":{"label":"Reporting and Analytics","color":"#B3B25A"},"Legacy Decommission":{"label":"Legacy Decommission","color":"#8A8F98"}},"epics":[{"id":"156","title":"High Fidelity Prototype","ws":"Infrastructure","project":"BDM","state":"New","blocked":false,"tags":[],"startDate":"2021-06-10T23:00:00Z","targetDate":"2021-07-10T23:00:00Z","dependsOn":[],"parentId":null,"pct":0},{"id":"157","title":"Interoperability Prototype","ws":"Infrastructure","project":"BDM","state":"New","blocked":false,"tags":[],"startDate":"2021-06-10T23:00:00Z","targetDate":"2021-07-10T23:00:00Z","dependsOn":[],"parentId":null,"pct":0},{"id":"158","title":"Cloud Procurement","ws":"Infrastructure","project":"BDM","state":"New","blocked":false,"tags":[],"startDate":"2021-06-10T23:00:00Z","targetDate":"2021-07-10T23:00:00Z","dependsOn":[],"parentId":null,"pct":0},{"id":"169","title":"Environment Build","ws":"Infrastructure","project":"BDM","state":"New","blocked":false,"tags":[],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0},{"id":"191","title":"Cloud Landing Zone Setup","ws":"Core Platform","project":"BDM","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-01-05T00:00:00Z","targetDate":"2026-02-04T00:00:00Z","dependsOn":[],"parentId":"239","pct":100},{"id":"192","title":"Identity & Access Platform","ws":"Core Platform","project":"BDM","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-02-04T00:00:00Z","targetDate":"2026-03-01T00:00:00Z","dependsOn":["191"],"parentId":"239","pct":100},{"id":"193","title":"Data Platform Foundations","ws":"Data Migration","project":"BDM","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-02-04T00:00:00Z","targetDate":"2026-03-11T00:00:00Z","dependsOn":["191"],"parentId":null,"pct":100},{"id":"197","title":"Portal Design System","ws":"Customer Portal","project":"BDM","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-03-01T00:00:00Z","targetDate":"2026-03-21T00:00:00Z","dependsOn":["192"],"parentId":null,"pct":100},{"id":"200","title":"Payments Gateway Integration","ws":"Payments","project":"BDM","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-03-01T00:00:00Z","targetDate":"2026-03-21T00:00:00Z","dependsOn":["192"],"parentId":null,"pct":100},{"id":"239","title":"Cloud & Platform Modernization","ws":"General","project":"BDM","state":"New","blocked":false,"tags":["programme theme"],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":38,"color":"#B08CC9"},{"id":"240","title":"Customer & Digital Experience","ws":"General","project":"BDM","state":"New","blocked":false,"tags":["programme theme"],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":29,"color":"#7CC9BE"},{"id":"241","title":"Reporting, Compliance & Decommissioning","ws":"General","project":"BDM","state":"New","blocked":false,"tags":["programme theme"],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0,"color":"#C97C7C"},{"id":"242","title":"Non-Prod Environment Hardening","ws":"Core Platform","project":"BDM","state":"New","blocked":false,"tags":["key epic","Security"],"startDate":"2026-02-04T00:00:00Z","targetDate":"2026-02-19T00:00:00Z","dependsOn":["191"],"parentId":"239","pct":0},{"id":"243","title":"Platform Observability Rollout","ws":"Core Platform","project":"BDM","state":"New","blocked":false,"tags":["Foundational","key epic"],"startDate":"2026-02-19T00:00:00Z","targetDate":"2026-03-11T00:00:00Z","dependsOn":["192"],"parentId":"239","pct":0},{"id":"219","title":"Payments Gateway Integration","ws":"Payments","project":"BAD","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-03-01T00:00:00Z","targetDate":"2026-03-21T00:00:00Z","dependsOn":["192"],"parentId":"240","pct":100},{"id":"220","title":"Payments Reconciliation Engine","ws":"Payments","project":"BAD","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-07-04T00:00:00Z","dependsOn":["214","219"],"parentId":"240","pct":0},{"id":"221","title":"Payments Go-Live","ws":"Payments","project":"BAD","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-07-04T00:00:00Z","targetDate":"2026-07-24T00:00:00Z","dependsOn":["220"],"parentId":"240","pct":0},{"id":"232","title":"Auth Flow — MFA Enrollment","ws":"Customer Portal","project":"BAD","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-06-19T00:00:00Z","dependsOn":[],"parentId":"230","pct":0},{"id":"233","title":"Reconciliation — Matching Engine","ws":"Payments","project":"BAD","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-06-19T00:00:00Z","dependsOn":[],"parentId":"220","pct":0},{"id":"234","title":"Reconciliation — Exception Handling","ws":"Payments","project":"BAD","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-06-19T00:00:00Z","targetDate":"2026-07-04T00:00:00Z","dependsOn":["233"],"parentId":"220","pct":0},{"id":"216","title":"Portal Design System","ws":"Customer Portal","project":"DECD","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-03-01T00:00:00Z","targetDate":"2026-03-21T00:00:00Z","dependsOn":["192"],"parentId":"240","pct":100},{"id":"217","title":"Customer Portal MVP","ws":"Customer Portal","project":"DECD","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-07-04T00:00:00Z","dependsOn":["216","214"],"parentId":"240","pct":0},{"id":"218","title":"Customer Portal GA","ws":"Customer Portal","project":"DECD","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-07-04T00:00:00Z","targetDate":"2026-07-29T00:00:00Z","dependsOn":["217"],"parentId":"240","pct":0},{"id":"230","title":"Portal MVP — Auth Flow","ws":"Customer Portal","project":"DECD","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-06-19T00:00:00Z","dependsOn":[],"parentId":"217","pct":0},{"id":"231","title":"Portal MVP — Account Dashboard","ws":"Customer Portal","project":"DECD","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-06-19T00:00:00Z","targetDate":"2026-07-04T00:00:00Z","dependsOn":["230"],"parentId":"217","pct":0},{"id":"238","title":"Customer Support Tooling","ws":"Customer Portal","project":"DECD","state":"New","blocked":false,"tags":["Customer Facing","key epic"],"startDate":"2026-03-21T00:00:00Z","targetDate":"2026-04-15T00:00:00Z","dependsOn":["216"],"parentId":"240","pct":0},{"id":"188","title":"The Epic Epic","ws":"General","project":"BDM2","state":"New","blocked":false,"tags":[],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0},{"id":"212","title":"Data Platform Foundations","ws":"Data Migration","project":"BDM2","state":"Done","blocked":false,"tags":["key epic"],"startDate":"2026-02-04T00:00:00Z","targetDate":"2026-03-11T00:00:00Z","dependsOn":["191"],"parentId":"239","pct":100},{"id":"213","title":"Legacy Data Extraction","ws":"Data Migration","project":"BDM2","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-03-11T00:00:00Z","targetDate":"2026-04-20T00:00:00Z","dependsOn":["212"],"parentId":"239","pct":0},{"id":"214","title":"Data Migration — Wave 1","ws":"Data Migration","project":"BDM2","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-04-20T00:00:00Z","targetDate":"2026-06-04T00:00:00Z","dependsOn":["213"],"parentId":"239","pct":0},{"id":"215","title":"Data Migration — Wave 2","ws":"Data Migration","project":"BDM2","state":"In Progress","blocked":true,"tags":["Blocked","key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-07-09T00:00:00Z","dependsOn":["214"],"parentId":"239","pct":0},{"id":"227","title":"Wave 1 — Schema Mapping","ws":"Data Migration","project":"BDM2","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-04-20T00:00:00Z","targetDate":"2026-05-12T00:00:00Z","dependsOn":[],"parentId":"214","pct":0},{"id":"228","title":"Wave 1 — Data Validation","ws":"Data Migration","project":"BDM2","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-05-12T00:00:00Z","targetDate":"2026-06-04T00:00:00Z","dependsOn":["227"],"parentId":"214","pct":0},{"id":"177","title":"Epic TP 1","ws":"General","project":"TPLAT","state":"New","blocked":false,"tags":[],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0},{"id":"180","title":"Epic - TP 2","ws":"General","project":"TPLAT","state":"New","blocked":false,"tags":[],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0},{"id":"183","title":"Epic TP 3","ws":"General","project":"TPLAT","state":"New","blocked":false,"tags":[],"startDate":null,"targetDate":null,"dependsOn":[],"parentId":null,"pct":0},{"id":"222","title":"Reporting Data Warehouse","ws":"Reporting and Analytics","project":"TPLAT","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-06-29T00:00:00Z","dependsOn":["214"],"parentId":"241","pct":0},{"id":"223","title":"Executive Dashboards","ws":"Reporting and Analytics","project":"TPLAT","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-06-29T00:00:00Z","targetDate":"2026-07-19T00:00:00Z","dependsOn":["222"],"parentId":"241","pct":0},{"id":"224","title":"Legacy System Freeze","ws":"Legacy Decommission","project":"TPLAT","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-07-24T00:00:00Z","targetDate":"2026-08-08T00:00:00Z","dependsOn":["215","221"],"parentId":"241","pct":0},{"id":"225","title":"Legacy Decommission","ws":"Legacy Decommission","project":"TPLAT","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-08-08T00:00:00Z","targetDate":"2026-08-28T00:00:00Z","dependsOn":["224"],"parentId":"241","pct":0},{"id":"226","title":"Regulatory Reporting Pack","ws":"Reporting and Analytics","project":"TPLAT","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-29T00:00:00Z","targetDate":"2026-07-14T00:00:00Z","dependsOn":["222"],"parentId":"241","pct":0},{"id":"229","title":"Schema Mapping — Field Crosswalk QA","ws":"Data Migration","project":"TPLAT","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-04-20T00:00:00Z","targetDate":"2026-05-12T00:00:00Z","dependsOn":[],"parentId":"227","pct":0},{"id":"235","title":"DW — Ingestion Pipeline","ws":"Reporting and Analytics","project":"TPLAT","state":"In Progress","blocked":false,"tags":["key epic"],"startDate":"2026-06-04T00:00:00Z","targetDate":"2026-06-17T00:00:00Z","dependsOn":[],"parentId":"222","pct":0},{"id":"236","title":"DW — Star Schema Design","ws":"Reporting and Analytics","project":"TPLAT","state":"New","blocked":false,"tags":["key epic"],"startDate":"2026-06-17T00:00:00Z","targetDate":"2026-06-29T00:00:00Z","dependsOn":["235"],"parentId":"222","pct":0}]};</script>
+<script>
+/* =========================================================================
+   DATA LOADING
+   Two ways this file gets its epics:
+     1. Standalone build (epic-network.html) — build.js inlines a snapshot
+        as `window.__EPICS_DATA__` before this script runs. No network
+        needed, works from a plain double-clicked file.
+     2. Dev mode (src/index.html served over http://) — no embedded data,
+        so we fetch ./epics.json next to the HTML instead.
+   Either way the shape is the same:
+     {
+       projects: { CODE: { label, parent: CODE|null }, ... },
+       workstreams: { KEY: { label, color }, ... },
+       epics: [ { id, title, ws, project, state, pct, blocked, startDate,
+                  targetDate, dependsOn: [id, ...], parentId: id|null,
+                  tags: [str, ...], color? }, ... ]
+     }
+   epics is everything ADO returned for the "Epic" work item type across
+   every ADO project in the programme tree, unfiltered — tags decide what
+   actually gets used (see init() below): "key epic" for real workstream
+   epics, "programme theme" for Strategic Themes (Tree view only,
+   structurally a level above workstream epics), anything else is dropped.
+   dependsOn drives the Network/Gantt critical path; parentId drives the
+   Tree view (Theme -> Epic, or Epic -> Epic for nested programme structure)
+   and is a separate relationship — see fetch_epics.js for how both are
+   pulled and shaped. Since a programme's Epics can live in a tree of ADO
+   projects (a top-level programme project plus several product projects),
+   both dependsOn and parentId routinely point at an epic in a *different*
+   project — every id lookup in this file (byId, themesById, etc.) is keyed
+   by bare epic id regardless of project, so those links are followed
+   transparently. `project` on each epic just drives the project filter and
+   the cross-project visual cue (see the `xproj` class below).
+   ========================================================================= */
+async function loadData(){
+  if(window.__EPICS_DATA__) return window.__EPICS_DATA__;
+  const res = await fetch('epics.json');
+  if(!res.ok) throw new Error(`Failed to load epics.json (HTTP ${res.status})`);
+  return res.json();
+}
+
+/* =========================================================================
+   GRAPH + CPM ENGINE
+   ========================================================================= */
+function buildGraph(epics){
+  const byId = new Map(epics.map(e => [e.id, e]));
+  const successors = new Map(epics.map(e => [e.id, []]));
+  epics.forEach(e => e.dependsOn.forEach(p => successors.get(p).push(e.id)));
+  return { byId, successors };
+}
+
+function topoOrder(epics, successors){
+  const indeg = new Map(epics.map(e => [e.id, e.dependsOn.length]));
+  const queue = epics.filter(e => indeg.get(e.id) === 0).map(e => e.id);
+  const order = [];
+  while(queue.length){
+    const id = queue.shift();
+    order.push(id);
+    successors.get(id).forEach(s => {
+      indeg.set(s, indeg.get(s)-1);
+      if(indeg.get(s) === 0) queue.push(s);
+    });
+  }
+  if(order.length !== epics.length) console.warn('Cycle detected in dependency graph');
+  return order;
+}
+
+// Duration per epic is derived from its ADO Start/Target dates (calendar
+// days), so slack/critical-path math reflects real scheduled durations
+// rather than a hand-entered estimate.
+function deriveDurations(epics){
+  epics.forEach(e => {
+    // new Date(null) silently resolves to the 1970 epoch rather than
+    // failing, so a missing date must be checked for explicitly — otherwise
+    // one epic without dates can poison the whole timeline (see
+    // deriveProgrammeStart below, which has the same hazard).
+    if(!e.startDate || !e.targetDate){ e.duration = 1; return; }
+    const days = Math.round((new Date(e.targetDate) - new Date(e.startDate)) / 86400000);
+    e.duration = Number.isFinite(days) && days > 0 ? days : 1;
+  });
+}
+
+// Programme start anchors to the earliest ADO start date among root epics
+// (no dependsOn) so the CPM pass reflects the real programme timeline
+// instead of a hardcoded date.
+function deriveProgrammeStart(epics){
+  const withDates = e => !!e.startDate;
+  const roots = epics.filter(e => e.dependsOn.length === 0 && withDates(e));
+  const pool = roots.length ? roots : epics.filter(withDates);
+  return pool.reduce((min, e) => {
+    const d = new Date(e.startDate);
+    return (!min || d < min) ? d : min;
+  }, null) || new Date();
+}
+
+function runCPM(epics, programmeStart){
+  const { byId, successors } = buildGraph(epics);
+  const order = topoOrder(epics, successors);
+
+  const ES = new Map(), EF = new Map();
+  order.forEach(id => {
+    const e = byId.get(id);
+    const es = e.dependsOn.length ? Math.max(...e.dependsOn.map(p => EF.get(p))) : 0;
+    ES.set(id, es);
+    EF.set(id, es + e.duration);
+  });
+  const projectEnd = Math.max(...order.map(id => EF.get(id)));
+
+  const LF = new Map(), LS = new Map();
+  [...order].reverse().forEach(id => {
+    const succs = successors.get(id);
+    const lf = succs.length ? Math.min(...succs.map(s => LS.get(s))) : projectEnd;
+    LF.set(id, lf);
+    LS.set(id, lf - byId.get(id).duration);
+  });
+
+  const level = new Map();
+  order.forEach(id => {
+    const e = byId.get(id);
+    level.set(id, e.dependsOn.length ? Math.max(...e.dependsOn.map(p => level.get(p))) + 1 : 0);
+  });
+
+  epics.forEach(e => {
+    e.ES = ES.get(e.id); e.EF = EF.get(e.id);
+    e.LS = LS.get(e.id); e.LF = LF.get(e.id);
+    e.slack = LS.get(e.id) - ES.get(e.id);
+    e.critical = e.slack <= 0;
+    e.level = level.get(e.id);
+    e.startDate = addDays(programmeStart, e.ES);
+    e.targetDate = addDays(programmeStart, e.EF);
+  });
+
+  return { byId, successors, order, projectEnd };
+}
+
+function addDays(date, n){ const d = new Date(date); d.setDate(d.getDate()+n); return d; }
+function fmtDate(d){ return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }); }
+
+/* =========================================================================
+   MAIN — everything below runs once data has loaded, since layout/CPM/DOM
+   all depend on the epic set being known.
+   ========================================================================= */
+loadData().then(init).catch(err => {
+  console.error(err);
+  const loading = document.getElementById('loadingState');
+  const errorEl = document.getElementById('errorState');
+  if(loading) loading.style.display = 'none';
+  if(errorEl){
+    errorEl.style.display = 'flex';
+    errorEl.textContent = 'Could not load epic data.\n' + err.message +
+      '\n\nRun fetch_epics.js to (re)generate epics.json, or open the standalone epic-network.html instead.';
+  }
+});
+
+function init(data){
+  const WORKSTREAMS = data.workstreams;
+  // The ADO programme tree: a top-level programme project (e.g. BDM)
+  // containing several product projects (e.g. BAD, DECD, BDM2, TPLAT).
+  // Epics carry a bare `project` code; this map resolves it to a display
+  // label and lets us walk up to root for a breadcrumb.
+  const PROJECTS = data.projects || {};
+  function projectLabel(code){ return (PROJECTS[code] && PROJECTS[code].label) || code || '—'; }
+  function projectBreadcrumb(code){
+    const chain = [];
+    let cur = code;
+    const seen = new Set();
+    while(cur && !seen.has(cur)){
+      seen.add(cur);
+      chain.unshift(cur);
+      cur = PROJECTS[cur] ? PROJECTS[cur].parent : null;
+    }
+    return chain.map(projectLabel).join(' › ');
+  }
+  // data.epics is everything ADO returned for the "Epic" work item type —
+  // that includes real workstream epics, Strategic Themes (also Epics in
+  // ADO, just one level up the hierarchy), and anything untagged/unrelated
+  // that happened to match the WIQL query (e.g. old prototype work). Tags
+  // are what tell these apart, since ADO has no other signal for it:
+  //   "key epic"        -> a real, in-scope workstream epic (Network/Gantt/Tree)
+  //   "programme theme" -> a Strategic Theme, Tree view only — never
+  //                        rendered in Network/Gantt, and excluded from the
+  //                        dependsOn/CPM graph since it isn't scheduled work
+  //   (neither)          -> not part of this programme; dropped entirely
+  const hasTag = (item, tag) => (item.tags || []).some(t => t.toLowerCase() === tag.toLowerCase());
+  const EPICS = data.epics.filter(e => hasTag(e, 'key epic'));
+  const THEME_ITEMS = data.epics.filter(e => hasTag(e, 'programme theme'));
+  const themesById = new Map(THEME_ITEMS.map(t => [t.id, t]));
+  const excludedCount = data.epics.length - EPICS.length - THEME_ITEMS.length;
+
+  // Every layout/CPM computation below assumes at least one key epic (e.g.
+  // levels[0] is dereferenced unconditionally) — fail with a clear, specific
+  // message here instead of a cryptic "Cannot read properties of undefined"
+  // deep in the layout code. This is a real, expected state mid-rollout: ADO
+  // epics start out untagged, so a fresh fetch can easily have Themes tagged
+  // correctly but zero workstream epics tagged 'key epic' yet.
+  if(EPICS.length === 0){
+    document.getElementById('loadingState')?.remove();
+    const errorEl = document.getElementById('errorState');
+    if(errorEl){
+      errorEl.style.display = 'flex';
+      const themeNote = THEME_ITEMS.length ? ` (${THEME_ITEMS.length} Strategic Theme${THEME_ITEMS.length===1?'':'s'} tagged correctly and found)` : '';
+      errorEl.textContent = `Fetched ${data.epics.length} epic${data.epics.length===1?'':'s'} from Azure DevOps, but none are tagged 'key epic'${themeNote} — nothing to render.\n\nTag your workstream Epics 'key epic' in ADO, then re-run fetch_epics.js and rebuild.`;
+    }
+    return;
+  }
+
+  // Free-form tags (beyond the two structural ones above) drive the Tag
+  // filter; an epic's theme (via parentId) drives the Parent filter. Both
+  // get a synthetic bucket key ('__untagged__'/'__unassigned__') so an epic
+  // missing that attribute still has a filter chip to live under, rather
+  // than being unfilterable/invisible to the UI.
+  const STRUCTURAL_TAGS = ['key epic', 'programme theme'];
+  const UNASSIGNED = '__unassigned__';
+  const UNTAGGED = '__untagged__';
+  function userTags(e){
+    return (e.tags || []).filter(t => !STRUCTURAL_TAGS.some(s => s.toLowerCase() === t.toLowerCase()));
+  }
+  function tagKeysOf(e){ const t = userTags(e); return t.length ? t : [UNTAGGED]; }
+  // Re-derives from themesById directly (rather than calling the
+  // later-defined themeOf) so this has no dependency on function-declaration
+  // order relative to where it's first used below.
+  function themeKeyOf(e){ return (e.parentId && themesById.has(e.parentId)) ? e.parentId : UNASSIGNED; }
+  const ALL_TAGS = [...new Set(EPICS.flatMap(userTags))].sort((a,b) => a.localeCompare(b));
+  const hasUntagged = EPICS.some(e => userTags(e).length === 0);
+  const hasUnassigned = EPICS.some(e => themeKeyOf(e) === UNASSIGNED);
+
+  deriveDurations(EPICS);
+  const PROGRAMME_START = deriveProgrammeStart(EPICS);
+  const { byId, successors, projectEnd } = runCPM(EPICS, PROGRAMME_START);
+
+  function predecessorsOf(id){ return byId.get(id).dependsOn; }
+  function ancestorsOf(id){
+    const seen = new Set();
+    (function walk(x){ predecessorsOf(x).forEach(p => { if(!seen.has(p)){ seen.add(p); walk(p); } }); })(id);
+    return seen;
+  }
+  function descendantsOf(id){
+    const seen = new Set();
+    (function walk(x){ successors.get(x).forEach(s => { if(!seen.has(s)){ seen.add(s); walk(s); } }); })(id);
+    return seen;
+  }
+
+  /* =======================================================================
+     LAYOUT — layered DAG, barycenter ordering pass to reduce crossings
+     ======================================================================= */
+  const COL_W = 268, ROW_H = 128, MARGIN_X = 50, MARGIN_Y = 60, CARD_W = 220, CARD_H = 104;
+
+  const levels = [];
+  EPICS.forEach(e => { (levels[e.level] = levels[e.level] || []).push(e.id); });
+
+  const yIndex = new Map();
+  levels[0].forEach((id,i) => yIndex.set(id,i));
+  function avgY(ids){
+    if(!ids.length) return 0;
+    return ids.reduce((s,id) => s + yIndex.get(id), 0) / ids.length;
+  }
+  for(let L=1; L<levels.length; L++){
+    levels[L].sort((a,b) => {
+      const ba = avgY(predecessorsOf(a)), bb = avgY(predecessorsOf(b));
+      return ba - bb;
+    });
+    levels[L].forEach((id,i) => yIndex.set(id,i));
+  }
+
+  const maxRows = Math.max(...levels.map(l => l.length));
+  levels.forEach(level => {
+    const offset = (maxRows - level.length) / 2;
+    level.forEach((id, i) => {
+      const e = byId.get(id);
+      e.x = MARGIN_X + e.level * COL_W;
+      e.y = MARGIN_Y + (i + offset) * ROW_H;
+    });
+  });
+
+  const svgW = MARGIN_X*2 + (levels.length-1)*COL_W + CARD_W;
+  const svgH = MARGIN_Y*2 + maxRows*ROW_H;
+
+  /* =======================================================================
+     RENDER — NETWORK
+     ======================================================================= */
+  const svg = document.getElementById('net');
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  const edgeLayer = document.getElementById('edgeLayer');
+  const nodeLayer = document.getElementById('nodeLayer');
+
+  function statusClass(e){
+    if(e.blocked) return 'blocked';
+    if(e.state === 'Done') return 'done';
+    if(e.state === 'In Progress') return 'progress';
+    return 'notstarted';
+  }
+  function statusColorVar(cls){
+    return { done:'var(--done)', progress:'var(--progress)', notstarted:'var(--notstarted)', blocked:'var(--blocked)' }[cls];
+  }
+
+  // An epic's parentId can point at either a Strategic Theme or another
+  // Epic (e.g. a Programme-level Epic) — these are two different tiers, so
+  // only ever resolve to one or the other, never both.
+  function themeOf(e){ return e.parentId && themesById.has(e.parentId) ? themesById.get(e.parentId) : null; }
+  function parentEpicOf(e){ return e.parentId && byId.has(e.parentId) ? byId.get(e.parentId) : null; }
+
+  function epicCardHTML(e){
+    const cls = statusClass(e);
+    const badgeLabel = e.blocked ? 'Blocked' : e.state;
+    const theme = themeOf(e);
+    const themeTag = theme ? ` · <span style="color:${theme.color}">${truncate(theme.title, 22)}</span>` : '';
+    return `
+      <div class="node-card" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="ws-bar" style="background:${WORKSTREAMS[e.ws].color}"></div>
+        <div class="row-top">
+          <span class="eid"><span class="ptag">${e.project}</span> ${e.id} · ${WORKSTREAMS[e.ws].label}${themeTag}</span>
+          <span class="badge ${cls}">${badgeLabel}</span>
+        </div>
+        <div class="title">${e.title}</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${e.pct}%;background:${statusColorVar(cls)}"></div></div>
+        <div class="meta meta-dates">
+          <span>${fmtDate(e.startDate)} → ${fmtDate(e.targetDate)}</span>
+        </div>
+        <div class="meta meta-progress" style="margin-top:2px;">
+          <span>${e.pct}% complete</span>
+          <span class="slack" style="color:${e.critical ? 'var(--amber)' : 'var(--text-mute)'}">${e.critical ? 'CRITICAL · 0d slack' : e.slack+'d slack'}</span>
+        </div>
+      </div>`;
+  }
+
+  EPICS.forEach(e => {
+    e.dependsOn.forEach(pId => {
+      const p = byId.get(pId);
+      const x1 = p.x + CARD_W, y1 = p.y + CARD_H/2;
+      const x2 = e.x,          y2 = e.y + CARD_H/2;
+      const dx = Math.max(40, (x2-x1)/2);
+      const d = `M ${x1},${y1} C ${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`;
+      const isCritical = p.critical && e.critical && p.EF === e.ES;
+      const isCrossProject = p.project !== e.project;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', 'edge' + (isCritical ? ' critical' : '') + (isCrossProject ? ' xproj' : ''));
+      path.setAttribute('marker-end', isCritical ? 'url(#arrowCritical)' : 'url(#arrow)');
+      path.dataset.from = pId; path.dataset.to = e.id;
+      edgeLayer.appendChild(path);
+
+      if(isCritical){
+        const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        dot.setAttribute('r', 3.2); dot.setAttribute('class','flow-dot');
+        const anim = document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+        anim.setAttribute('dur', '2.4s');
+        anim.setAttribute('repeatCount', 'indefinite');
+        anim.setAttribute('path', d);
+        anim.setAttribute('begin', (Math.random()*1.2).toFixed(2)+'s');
+        dot.appendChild(anim);
+        edgeLayer.appendChild(dot);
+      }
+    });
+  });
+
+  EPICS.forEach(e => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class', 'node' + (e.critical ? ' critical' : ''));
+    g.dataset.id = e.id;
+
+    const fo = document.createElementNS('http://www.w3.org/2000/svg','foreignObject');
+    fo.setAttribute('x', e.x); fo.setAttribute('y', e.y);
+    fo.setAttribute('width', CARD_W); fo.setAttribute('height', CARD_H);
+    fo.innerHTML = epicCardHTML(e);
+
+    g.appendChild(fo);
+    nodeLayer.appendChild(g);
+
+    g.addEventListener('mouseenter', ev => showTooltip(ev, e));
+    g.addEventListener('mousemove', ev => positionTooltip(ev));
+    g.addEventListener('mouseleave', hideTooltip);
+    g.addEventListener('click', () => selectNode(e.id));
+  });
+
+  /* =======================================================================
+     TOOLTIP
+     ======================================================================= */
+  const tooltip = document.getElementById('tooltip');
+  function showTooltip(ev, e){
+    const deps = e.dependsOn.length ? e.dependsOn.map(id => byId.get(id).id + ' · ' + byId.get(id).title).join('<br>') : '— none (programme root)';
+    const theme = themeOf(e);
+    const parentEpic = parentEpicOf(e);
+    tooltip.innerHTML = `
+      <h4>${e.id} — ${e.title}</h4>
+      <div class="tt-row"><span>Project</span><b>${projectBreadcrumb(e.project)}</b></div>
+      <div class="tt-row"><span>Workstream</span><b>${WORKSTREAMS[e.ws].label}</b></div>
+      ${theme ? `<div class="tt-row"><span>Strategic theme</span><b style="color:${theme.color}">${theme.title}</b></div>` : ''}
+      <div class="tt-row"><span>State</span><b>${e.blocked ? 'Blocked' : e.state}</b></div>
+      <div class="tt-row"><span>Start → Target</span><b>${fmtDate(e.startDate)} → ${fmtDate(e.targetDate)}</b></div>
+      <div class="tt-row"><span>Duration</span><b>${e.duration}d</b></div>
+      <div class="tt-row"><span>Slack (float)</span><b style="color:${e.critical?'#F5A623':'#E8EDF4'}">${e.slack}d</b></div>
+      <div class="tt-row"><span>On critical path</span><b>${e.critical ? 'YES' : 'no'}</b></div>
+      <div class="tt-row"><span>Tags</span><b>${userTags(e).join(', ') || '—'}</b></div>
+      <div class="tt-deps"><b style="font-family:'IBM Plex Mono',monospace;color:var(--text-dim);">Depends on:</b><br>${deps}</div>
+      ${parentEpic ? `<div class="tt-deps"><b style="font-family:'IBM Plex Mono',monospace;color:var(--text-dim);">Parent epic:</b><br>${parentEpic.id} · ${parentEpic.title}</div>` : ''}
+    `;
+    tooltip.classList.add('show');
+    positionTooltip(ev);
+  }
+  function showThemeTooltip(ev, themeId){
+    const theme = themesById.get(themeId);
+    const children = (treeChildren.get(themeId) || []).map(id => byId.get(id));
+    tooltip.innerHTML = `
+      <h4>${theme.title}</h4>
+      <div class="tt-row"><span>Project</span><b>${projectBreadcrumb(theme.project)}</b></div>
+      <div class="tt-row"><span>Type</span><b>Strategic theme</b></div>
+      <div class="tt-row"><span>Epics</span><b>${children.length}</b></div>
+      <div class="tt-deps"><b style="font-family:'IBM Plex Mono',monospace;color:var(--text-dim);">Contains:</b><br>${children.length ? children.map(c => c.id + ' · ' + c.title).join('<br>') : '— none'}</div>
+    `;
+    tooltip.classList.add('show');
+    positionTooltip(ev);
+  }
+  function positionTooltip(ev){
+    const pad = 16;
+    let x = ev.clientX + pad, y = ev.clientY + pad;
+    if(x + 286 > window.innerWidth) x = ev.clientX - 286 - pad;
+    if(y + 220 > window.innerHeight) y = window.innerHeight - 230;
+    tooltip.style.left = x+'px'; tooltip.style.top = y+'px';
+  }
+  function hideTooltip(){ tooltip.classList.remove('show'); }
+
+  /* =======================================================================
+     SELECTION (trace upstream/downstream chain)
+     ======================================================================= */
+  let selectedId = null;
+  function selectNode(id){
+    selectedId = (selectedId === id) ? null : id;
+    applyState();
+  }
+
+  /* =======================================================================
+     FILTERS
+     ======================================================================= */
+  const activeWs = new Set(Object.keys(WORKSTREAMS));
+  const activeProjects = new Set(Object.keys(PROJECTS));
+  const activeThemes = new Set([...themesById.keys(), ...(hasUnassigned ? [UNASSIGNED] : [])]);
+  const activeTags = new Set([...ALL_TAGS, ...(hasUntagged ? [UNTAGGED] : [])]);
+  function tagMatches(e){ return tagKeysOf(e).some(k => activeTags.has(k)); }
+  let critOnly = false;
+  // Only one filter dimension is shown at a time (see filterTypeSwitch
+  // below); the other three chip-groups keep whatever selection they had,
+  // but that selection is ignored while hidden — otherwise toggling e.g. a
+  // Theme off, then switching to the Tag row, would silently keep dimming
+  // nodes for a filter the user can no longer see or change.
+  let activeFilterType = 'ws';
+  function epicMatchesFilter(e){
+    switch(activeFilterType){
+      case 'project': return activeProjects.has(e.project);
+      case 'theme': return activeThemes.has(themeKeyOf(e));
+      case 'tag': return tagMatches(e);
+      default: return activeWs.has(e.ws);
+    }
+  }
+  // Strategic Theme nodes (Tree view only) aren't real epics — they have no
+  // workstream or tags, so only the Project and Theme filter rows apply to
+  // them (mirrors the pre-existing ws/tag-don't-apply-to-themes behaviour).
+  function themeMatchesFilter(themeId, node){
+    switch(activeFilterType){
+      case 'project': return activeProjects.has(node.project);
+      case 'theme': return activeThemes.has(themeId);
+      default: return true;
+    }
+  }
+
+  // Each chip independently toggles its own membership in the group's
+  // active set; Select all / Deselect all (wired below, once every group's
+  // chips exist) act on whichever filter row is currently visible.
+  function wireChipGroup(chips, activeSet, keyOf){
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const key = keyOf(chip);
+        if(activeSet.has(key)){ activeSet.delete(key); chip.classList.remove('active'); chip.classList.add('off'); }
+        else { activeSet.add(key); chip.classList.add('active'); chip.classList.remove('off'); }
+        applyState();
+      });
+    });
+  }
+
+  const wsFilters = document.getElementById('wsFilters');
+  const wsChips = Object.entries(WORKSTREAMS).map(([key, w]) => {
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.style.color = w.color;
+    chip.innerHTML = `<span class="dot" style="background:${w.color}"></span>${w.label}`;
+    chip.dataset.key = key;
+    wsFilters.appendChild(chip);
+    return chip;
+  });
+  wireChipGroup(wsChips, activeWs, chip => chip.dataset.key);
+
+  // Project filter — independent of the workstream filter, since a
+  // workstream's epics can be split across several ADO projects.
+  const projFilters = document.getElementById('projFilters');
+  const projChips = projFilters ? Object.keys(PROJECTS).map(code => {
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.innerHTML = `<span class="mono">${code}</span>`;
+    chip.title = projectBreadcrumb(code);
+    chip.dataset.key = code;
+    projFilters.appendChild(chip);
+    return chip;
+  }) : [];
+  wireChipGroup(projChips, activeProjects, chip => chip.dataset.key);
+
+  // Parent (Strategic Theme) filter — theme chips get a colored dot like
+  // workstream chips, since a theme's color is a real, stable identity.
+  const themeFilters = document.getElementById('themeFilters');
+  const themeChips = [...themesById.values(), ...(hasUnassigned ? [{ id: UNASSIGNED, title: 'Unassigned', color: 'var(--text-mute)' }] : [])]
+    .map(t => {
+      const chip = document.createElement('div');
+      chip.className = 'chip active';
+      chip.style.color = t.color;
+      chip.innerHTML = `<span class="dot" style="background:${t.color}"></span>${t.title}`;
+      chip.dataset.key = t.id;
+      themeFilters.appendChild(chip);
+      return chip;
+    });
+  wireChipGroup(themeChips, activeThemes, chip => chip.dataset.key);
+
+  // Tag filter — plain text chips, no dot: unlike ws/theme/project, a tag
+  // has no stable color identity, it's free-form.
+  const tagFilters = document.getElementById('tagFilters');
+  const tagChips = [...ALL_TAGS, ...(hasUntagged ? [UNTAGGED] : [])].map(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.textContent = tag === UNTAGGED ? 'Untagged' : tag;
+    chip.dataset.key = tag;
+    tagFilters.appendChild(chip);
+    return chip;
+  });
+  wireChipGroup(tagChips, activeTags, chip => chip.dataset.key);
+
+  // Filter-type switch — swaps which single filter row (and hence which
+  // single filter dimension) is visible/active, the same segmented-control
+  // pattern as the Network/Gantt/Tree view switch.
+  const filterGroups = document.querySelectorAll('#filterBar .filter-group');
+  document.querySelectorAll('#filterTypeSwitch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#filterTypeSwitch button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilterType = btn.dataset.filter;
+      filterGroups.forEach(g => g.classList.toggle('active', g.dataset.filterGroup === activeFilterType));
+      applyState();
+    });
+  });
+
+  // Select all / Deselect all — act on whichever filter row is currently
+  // visible, since only one chip group is ever on screen at a time.
+  const chipGroupsByType = {
+    ws: { chips: wsChips, activeSet: activeWs },
+    project: { chips: projChips, activeSet: activeProjects },
+    theme: { chips: themeChips, activeSet: activeThemes },
+    tag: { chips: tagChips, activeSet: activeTags },
+  };
+  document.getElementById('selectAllChips')?.addEventListener('click', () => {
+    const { chips, activeSet } = chipGroupsByType[activeFilterType];
+    chips.forEach(c => { activeSet.add(c.dataset.key); c.classList.add('active'); c.classList.remove('off'); });
+    applyState();
+  });
+  document.getElementById('deselectAllChips')?.addEventListener('click', () => {
+    const { chips, activeSet } = chipGroupsByType[activeFilterType];
+    activeSet.clear();
+    chips.forEach(c => { c.classList.remove('active'); c.classList.add('off'); });
+    applyState();
+  });
+
+  const critToggle = document.getElementById('critToggle');
+  critToggle.addEventListener('click', () => {
+    critOnly = !critOnly;
+    critToggle.classList.toggle('on', critOnly);
+    applyState();
+  });
+
+  function applyState(){
+    // If a Strategic Theme is selected (Tree view only — themes aren't part
+    // of the dependsOn graph), fall back to its epic subtree so switching to
+    // Network/Gantt still highlights something sensible instead of crashing
+    // on ancestorsOf/descendantsOf(themeId), which only know about epics.
+    const themeSelected = selectedId && themesById.has(selectedId);
+    const highlightSet = selectedId
+      ? (themeSelected ? hierarchyDescendantsOf(selectedId) : new Set([selectedId, ...ancestorsOf(selectedId), ...descendantsOf(selectedId)]))
+      : null;
+
+    document.querySelectorAll('.node').forEach(g => {
+      const id = g.dataset.id, e = byId.get(id);
+      let dim = !epicMatchesFilter(e) || (critOnly && !e.critical);
+      if(highlightSet) dim = dim || !highlightSet.has(id);
+      g.classList.toggle('dimmed', dim);
+      g.classList.toggle('selected', id === selectedId);
+    });
+
+    document.querySelectorAll('.edge').forEach(p => {
+      const from = p.dataset.from, to = p.dataset.to;
+      const eFrom = byId.get(from), eTo = byId.get(to);
+      let dim = !epicMatchesFilter(eFrom) || !epicMatchesFilter(eTo)
+        || (critOnly && !p.classList.contains('critical'));
+      let hl = false;
+      if(highlightSet){
+        hl = highlightSet.has(from) && highlightSet.has(to);
+        dim = dim || !hl;
+      }
+      p.classList.toggle('dimmed', dim);
+      p.classList.toggle('highlighted', hl && selectedId && !dim);
+    });
+
+    document.querySelectorAll('.gantt-bar-group').forEach(g => {
+      const id = g.dataset.id, e = byId.get(id);
+      let dim = !epicMatchesFilter(e) || (critOnly && !e.critical);
+      if(highlightSet) dim = dim || !highlightSet.has(id);
+      g.classList.toggle('dimmed', dim);
+      g.classList.toggle('selected', id === selectedId);
+    });
+    document.querySelectorAll('.gantt-label-row').forEach(g => {
+      const id = g.dataset.id, e = byId.get(id);
+      let dim = !epicMatchesFilter(e) || (critOnly && !e.critical);
+      if(highlightSet) dim = dim || !highlightSet.has(id);
+      g.classList.toggle('dimmed', dim);
+    });
+    document.querySelectorAll('.gantt-link').forEach(p => {
+      const from = p.dataset.from, to = p.dataset.to;
+      const eFrom = byId.get(from), eTo = byId.get(to);
+      let dim = !epicMatchesFilter(eFrom) || !epicMatchesFilter(eTo)
+        || (critOnly && !p.classList.contains('critical'));
+      let hl = false;
+      if(highlightSet){
+        hl = highlightSet.has(from) && highlightSet.has(to);
+        dim = dim || !hl;
+      }
+      p.classList.toggle('dimmed', dim);
+      p.classList.toggle('highlighted', hl && selectedId && !dim);
+    });
+
+    // --- tree nodes/links (hierarchy ancestors/descendants, not dependsOn) ---
+    const hierarchyHighlightSet = selectedId ? new Set([selectedId, ...hierarchyAncestorsOf(selectedId), ...hierarchyDescendantsOf(selectedId)]) : null;
+
+    document.querySelectorAll('.tree-node').forEach(g => {
+      const id = g.dataset.id;
+      // Themes aren't in a workstream and have no critical-path status, so
+      // the ws/tag/critOnly filters don't apply to them — only the project
+      // filter, their own Parent-filter membership, and the hierarchy
+      // selection (if any) can dim a theme node.
+      const e = byId.get(id);
+      const node = e || themesById.get(id);
+      let dim = e ? (!epicMatchesFilter(e) || (critOnly && !e.critical)) : !themeMatchesFilter(id, node);
+      if(hierarchyHighlightSet) dim = dim || !hierarchyHighlightSet.has(id);
+      g.classList.toggle('dimmed', dim);
+      g.classList.toggle('selected', id === selectedId);
+    });
+
+    document.querySelectorAll('.tree-link').forEach(p => {
+      const from = p.dataset.from, to = p.dataset.to;
+      const eFrom = byId.get(from), eTo = byId.get(to); // undefined when an endpoint is a theme
+      const nFrom = eFrom || themesById.get(from), nTo = eTo || themesById.get(to);
+      let dim = (eFrom ? !epicMatchesFilter(eFrom) : !themeMatchesFilter(from, nFrom))
+        || (eTo ? !epicMatchesFilter(eTo) : !themeMatchesFilter(to, nTo));
+      let hl = false;
+      if(hierarchyHighlightSet){
+        hl = hierarchyHighlightSet.has(from) && hierarchyHighlightSet.has(to);
+        dim = dim || !hl;
+      }
+      p.classList.toggle('dimmed', dim);
+      p.classList.toggle('highlighted', hl && selectedId && !dim);
+    });
+  }
+
+  document.getElementById('canvas-wrap').addEventListener('click', ev => {
+    if(ev.target.id === 'canvas-wrap' || ev.target.id === 'net'){ selectedId = null; applyState(); }
+  });
+  document.getElementById('ganttBody').addEventListener('click', ev => {
+    if(ev.target.id === 'ganttTimeline' || ev.target.id === 'ganttBarLayer' || ev.target.id === 'ganttGridLayer'){
+      selectedId = null; applyState();
+    }
+  });
+
+  /* =======================================================================
+     GANTT VIEW
+     ======================================================================= */
+  const G_LABEL_W = 280, G_ROW_H = 34, G_GROUP_H = 26, G_PX_PER_DAY = 6, G_HEADER_H = 34, G_BAR_H = 18;
+
+  function buildGanttRows(){
+    const rows = [];
+    Object.entries(WORKSTREAMS).forEach(([key, w]) => {
+      const epics = EPICS.filter(e => e.ws === key).sort((a,b) => a.ES - b.ES);
+      if(!epics.length) return;
+      rows.push({ type:'group', key, label:w.label, color:w.color });
+      epics.forEach(e => rows.push({ type:'epic', epic:e }));
+    });
+    return rows;
+  }
+
+  function renderGantt(){
+    const rows = buildGanttRows();
+    const totalDays = projectEnd + 14;
+    const timelineW = totalDays * G_PX_PER_DAY;
+    const bodyH = rows.length * G_ROW_H;
+
+    const axisSvg = document.getElementById('ganttAxis');
+    const labelsSvg = document.getElementById('ganttLabels');
+    const timelineSvg = document.getElementById('ganttTimeline');
+    const gridLayer = document.getElementById('ganttGridLayer');
+    const linkLayer = document.getElementById('ganttLinkLayer');
+    const barLayer = document.getElementById('ganttBarLayer');
+
+    axisSvg.setAttribute('width', timelineW); axisSvg.setAttribute('height', G_HEADER_H);
+    axisSvg.setAttribute('viewBox', `0 0 ${timelineW} ${G_HEADER_H}`);
+    labelsSvg.setAttribute('width', G_LABEL_W); labelsSvg.setAttribute('height', bodyH);
+    labelsSvg.setAttribute('viewBox', `0 0 ${G_LABEL_W} ${bodyH}`);
+    timelineSvg.setAttribute('width', timelineW); timelineSvg.setAttribute('height', bodyH);
+    timelineSvg.setAttribute('viewBox', `0 0 ${timelineW} ${bodyH}`);
+
+    const xOf = day => day * G_PX_PER_DAY;
+
+    let axisHtml = '';
+    let gridHtml = '';
+    const endDate = addDays(PROGRAMME_START, totalDays);
+    let cursor = new Date(PROGRAMME_START.getFullYear(), PROGRAMME_START.getMonth(), 1);
+    while(cursor <= endDate){
+      const dayOffset = Math.round((cursor - PROGRAMME_START) / 86400000);
+      if(dayOffset >= 0){
+        const x = xOf(dayOffset);
+        axisHtml += `<line x1="${x}" y1="0" x2="${x}" y2="${G_HEADER_H}" class="gantt-gridline month"></line>
+          <text x="${x+6}" y="21" class="gantt-month-label">${cursor.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</text>`;
+        gridHtml += `<line x1="${x}" y1="0" x2="${x}" y2="${bodyH}" class="gantt-gridline month"></line>`;
+      }
+      cursor = new Date(cursor.getFullYear(), cursor.getMonth()+1, 1);
+    }
+    for(let d=0; d<=totalDays; d+=7){
+      const x = xOf(d);
+      gridHtml += `<line x1="${x}" y1="0" x2="${x}" y2="${bodyH}" class="gantt-gridline"></line>`;
+    }
+    axisSvg.innerHTML = axisHtml;
+    gridLayer.innerHTML = gridHtml;
+
+    let labelHtml = '';
+    let stripeHtml = '';
+    let barHtml = '';
+    const rowY = new Map();
+
+    rows.forEach((row, i) => {
+      const y = i * G_ROW_H;
+      if(row.type === 'group'){
+        stripeHtml += `<rect x="0" y="${y}" width="${G_LABEL_W}" height="${G_GROUP_H}" class="grp-bg"></rect>`;
+        labelHtml += `<g class="gantt-group-row">
+            <rect x="0" y="${y}" width="${G_LABEL_W}" height="${G_GROUP_H}" class="grp-bg"></rect>
+            <rect x="0" y="${y}" width="4" height="${G_GROUP_H}" fill="${row.color}"></rect>
+            <text x="14" y="${y+G_GROUP_H/2+4}" fill="var(--text-dim)">${row.label}</text>
+          </g>`;
+      } else {
+        const e = row.epic;
+        rowY.set(e.id, y + G_ROW_H/2);
+        const cls = statusClass(e);
+        const color = statusColorVar(cls);
+
+        stripeHtml += `<rect x="0" y="${y}" width="${G_LABEL_W}" height="${G_ROW_H}" class="gantt-row-stripe ${i%2?'alt':''}"></rect>`;
+        labelHtml += `<g class="gantt-label-row" data-id="${e.id}">
+            <rect x="0" y="${y}" width="${G_LABEL_W}" height="${G_ROW_H}" class="rowbg"></rect>
+            <rect x="0" y="${y}" width="3" height="${G_ROW_H}" fill="${WORKSTREAMS[e.ws].color}"></rect>
+            <text x="14" y="${y+14}" class="geid">${e.project} · ${e.id} · ${e.critical ? 'CRITICAL' : e.slack+'d slack'}</text>
+            <text x="14" y="${y+27}" class="gname">${truncate(e.title, 30)}</text>
+          </g>`;
+        const x1 = xOf(e.ES), x2 = xOf(e.EF);
+        const barY = y + (G_ROW_H - G_BAR_H)/2;
+        const w = Math.max(4, x2-x1);
+        const fillW = w * (e.pct/100);
+        barHtml += `<g class="gantt-bar-group${e.critical?' critical':''}" data-id="${e.id}">
+            <rect x="${x1}" y="${barY}" width="${w}" height="${G_BAR_H}" rx="4" class="gantt-bar-track"></rect>
+            <rect x="${x1}" y="${barY}" width="${fillW}" height="${G_BAR_H}" rx="4" class="gantt-bar-fill" fill="${color}" opacity="0.85"></rect>
+            <rect x="${x1}" y="${barY}" width="${w}" height="${G_BAR_H}" rx="4" class="gantt-bar-outline"></rect>
+            <text x="${x2+8}" y="${barY+13}" class="gantt-bar-label">${e.pct}%${e.blocked?' · blocked':''}</text>
+          </g>`;
+      }
+    });
+    labelsSvg.innerHTML = `<g>${stripeHtml}</g>${labelHtml}`;
+    barLayer.innerHTML = barHtml;
+
+    let linkHtml = '';
+    EPICS.forEach(e => {
+      if(!rowY.has(e.id)) return;
+      e.dependsOn.forEach(pId => {
+        const p = byId.get(pId);
+        if(!rowY.has(pId)) return;
+        const x1 = xOf(p.EF), y1 = rowY.get(pId);
+        const x2 = xOf(e.ES), y2 = rowY.get(e.id);
+        const midX = x1 + Math.max(10, (x2-x1)/2);
+        const isCritical = p.critical && e.critical && p.EF === e.ES;
+        const isCrossProject = p.project !== e.project;
+        const d = (Math.abs(y1-y2) < 1)
+          ? `M ${x1},${y1} L ${x2},${y2}`
+          : `M ${x1},${y1} L ${midX},${y1} L ${midX},${y2} L ${x2},${y2}`;
+        linkHtml += `<path d="${d}" class="gantt-link${isCritical?' critical':''}${isCrossProject?' xproj':''}" data-from="${pId}" data-to="${e.id}" marker-end="url(#${isCritical?'arrowGanttCritical':'arrowGantt'})"></path>`;
+      });
+    });
+    linkLayer.innerHTML = linkHtml;
+
+    document.querySelectorAll('.gantt-bar-group, .gantt-label-row').forEach(g => {
+      const id = g.dataset.id, e = byId.get(id);
+      g.addEventListener('mouseenter', ev => showTooltip(ev, e));
+      g.addEventListener('mousemove', ev => positionTooltip(ev));
+      g.addEventListener('mouseleave', hideTooltip);
+      g.addEventListener('click', ev => { ev.stopPropagation(); selectNode(id); });
+    });
+  }
+
+  function truncate(str, n){ return str.length > n ? str.slice(0,n-1)+'…' : str; }
+
+  const ganttScrollHeader = document.getElementById('ganttScrollHeader');
+  const ganttTimelineScroll = document.getElementById('ganttTimelineScroll');
+  ganttTimelineScroll.addEventListener('scroll', () => {
+    ganttScrollHeader.scrollLeft = ganttTimelineScroll.scrollLeft;
+  });
+
+  /* =======================================================================
+     TREE VIEW — parent/child Epic hierarchy: Strategic Themes at the top,
+     then Epics (and potentially Programme-level Epics) nested under them.
+     This is a *different* relationship from dependsOn (which drives the
+     Network/Gantt critical path) — an epic can depend on a sibling in
+     another workstream while still rolling up under the same theme, so
+     this needs its own graph and its own ancestors/descendants used for
+     click-to-trace highlighting. A parentId may point at either a Theme
+     or another Epic — both are valid "parent" kinds in this graph.
+     ======================================================================= */
+  const treeChildren = new Map(); // parentId (theme or epic) -> [childId, ...]
+  EPICS.forEach(e => {
+    if(e.parentId && (byId.has(e.parentId) || themesById.has(e.parentId))){
+      if(!treeChildren.has(e.parentId)) treeChildren.set(e.parentId, []);
+      treeChildren.get(e.parentId).push(e.id);
+    } else {
+      e.parentId = null; // normalize dangling/self refs defensively
+    }
+  });
+  // Themes are always top-level (no theme-of-theme nesting); epics with no
+  // parent at all are also top-level, alongside whatever themes exist.
+  const treeRoots = [...themesById.keys(), ...EPICS.filter(e => !e.parentId).map(e => e.id)];
+
+  function hierarchyAncestorsOf(id){
+    const seen = new Set();
+    (function walk(x){ const node = byId.get(x); const p = node ? node.parentId : null; if(p && !seen.has(p)){ seen.add(p); walk(p); } })(id);
+    return seen;
+  }
+  function hierarchyDescendantsOf(id){
+    const seen = new Set();
+    (function walk(x){ (treeChildren.get(x)||[]).forEach(c => { if(!seen.has(c)){ seen.add(c); walk(c); } }); })(id);
+    return seen;
+  }
+
+  const T_COL_W = CARD_W + 36, T_ROW_H = CARD_H + 64, T_MARGIN_X = 50, T_MARGIN_Y = 50;
+  // Populated by renderTree() below — captured here (rather than left local
+  // to that function) so the zoom section can read the Tree view's native
+  // layout size without depending on function declaration order.
+  const treeDims = { w: 0, h: 0 };
+
+  function layoutTree(){
+    const centerOf = new Map(); // id -> { centerX, depth }
+    let nextLeafSlot = 0;
+    function place(id, depth){
+      const kids = treeChildren.get(id) || [];
+      let centerX;
+      if(!kids.length){
+        centerX = T_MARGIN_X + nextLeafSlot*T_COL_W + CARD_W/2;
+        nextLeafSlot++;
+      } else {
+        const kidCenters = kids.map(k => place(k, depth+1));
+        centerX = (Math.min(...kidCenters) + Math.max(...kidCenters)) / 2;
+      }
+      centerOf.set(id, { centerX, depth });
+      return centerX;
+    }
+    treeRoots.forEach(r => place(r, 0));
+    return centerOf;
+  }
+
+  function renderTree(){
+    const centerOf = layoutTree();
+    const maxDepth = Math.max(0, ...[...centerOf.values()].map(p => p.depth));
+    const maxCenterX = Math.max(CARD_W, ...[...centerOf.values()].map(p => p.centerX));
+    const svgW = maxCenterX + CARD_W/2 + T_MARGIN_X;
+    const svgH = T_MARGIN_Y*2 + (maxDepth+1)*T_ROW_H - (T_ROW_H - CARD_H);
+    treeDims.w = svgW; treeDims.h = svgH;
+
+    const treeSvg = document.getElementById('treeNet');
+    treeSvg.setAttribute('width', svgW);
+    treeSvg.setAttribute('height', svgH);
+    treeSvg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+    const treeEdgeLayer = document.getElementById('treeEdgeLayer');
+    const treeNodeLayer = document.getElementById('treeNodeLayer');
+    treeEdgeLayer.innerHTML = '';
+    treeNodeLayer.innerHTML = '';
+
+    treeChildren.forEach((kids, parentId) => {
+      const pp = centerOf.get(parentId);
+      const x1 = pp.centerX, y1 = T_MARGIN_Y + pp.depth*T_ROW_H + CARD_H;
+      kids.forEach(childId => {
+        const cp = centerOf.get(childId);
+        const x2 = cp.centerX, y2 = T_MARGIN_Y + cp.depth*T_ROW_H;
+        const dy = Math.max(16, (y2-y1)/2);
+        const d = `M ${x1},${y1} C ${x1},${y1+dy} ${x2},${y2-dy} ${x2},${y2}`;
+        const parentNode = byId.get(parentId) || themesById.get(parentId);
+        const childNode = byId.get(childId) || themesById.get(childId);
+        const isCrossProject = parentNode && childNode && parentNode.project !== childNode.project;
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d', d);
+        path.setAttribute('class', 'tree-link' + (isCrossProject ? ' xproj' : ''));
+        path.dataset.from = parentId; path.dataset.to = childId;
+        treeEdgeLayer.appendChild(path);
+      });
+    });
+
+    centerOf.forEach((pos, id) => {
+      const isTheme = themesById.has(id);
+      const e = isTheme ? null : byId.get(id);
+      const x = pos.centerX - CARD_W/2, y = T_MARGIN_Y + pos.depth*T_ROW_H;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class', 'tree-node' + (isTheme ? ' theme' : (e.critical ? ' critical' : '')));
+      g.dataset.id = id;
+
+      const fo = document.createElementNS('http://www.w3.org/2000/svg','foreignObject');
+      fo.setAttribute('x', x); fo.setAttribute('y', y);
+      fo.setAttribute('width', CARD_W); fo.setAttribute('height', CARD_H);
+      fo.innerHTML = isTheme ? themeCardHTML(themesById.get(id), (treeChildren.get(id)||[]).length) : epicCardHTML(e);
+
+      g.appendChild(fo);
+      treeNodeLayer.appendChild(g);
+
+      g.addEventListener('mouseenter', ev => isTheme ? showThemeTooltip(ev, id) : showTooltip(ev, e));
+      g.addEventListener('mousemove', ev => positionTooltip(ev));
+      g.addEventListener('mouseleave', hideTooltip);
+      g.addEventListener('click', () => selectNode(id));
+    });
+  }
+
+  function themeCardHTML(theme, childCount){
+    return `
+      <div class="node-card theme-card" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="ws-bar" style="background:${theme.color}"></div>
+        <div class="row-top">
+          <span class="eid"><span class="ptag">${theme.project}</span> STRATEGIC THEME</span>
+        </div>
+        <div class="title">${theme.title}</div>
+        <div class="meta">
+          <span>${childCount} epic${childCount === 1 ? '' : 's'}</span>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('tree-canvas-wrap').addEventListener('click', ev => {
+    if(ev.target.id === 'tree-canvas-wrap' || ev.target.id === 'treeNet'){ selectedId = null; applyState(); }
+  });
+
+  /* =======================================================================
+     VIEW SWITCHING
+     ======================================================================= */
+  const networkView = document.getElementById('networkView');
+  const ganttView = document.getElementById('ganttView');
+  const treeView = document.getElementById('treeView');
+  document.querySelectorAll('#viewSwitch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#viewSwitch button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      networkView.style.display = view === 'network' ? 'flex' : 'none';
+      ganttView.style.display = view === 'gantt' ? 'flex' : 'none';
+      treeView.style.display = view === 'tree' ? 'flex' : 'none';
+      if(!userZoomed) zoomPct = fitZoomToView();
+      applyZoom();
+    });
+  });
+  networkView.style.display = 'flex';
+
+  /* =======================================================================
+     ZOOM + LEVEL-OF-DETAIL — Network and Tree share one zoom control, since
+     both are node/edge diagrams laid out in fixed pixel coordinates (Gantt
+     has its own time-axis scale and isn't part of this — the control hides
+     itself there). Zoom is "% of native layout size": the SVG's viewBox
+     stays fixed at the logical layout size while its rendered CSS
+     width/height scale by the zoom fraction — SVG's own viewBox-scaling
+     mechanism, so foreignObject card content scales with it for free and
+     #canvas-wrap/#tree-canvas-wrap's existing overflow:auto scrollbars just
+     work. See the data-lod CSS in styles.css for the legibility side: below
+     ~75% zoom, geometric shrink alone makes card text illegible well before
+     the layout is meaningfully zoomed out, so lower tiers drop secondary
+     fields and enlarge what's left instead.
+     ======================================================================= */
+  const ZOOM_MIN = 20, ZOOM_MAX = 200;
+  let zoomPct = 100;
+  let userZoomed = false; // true once the user takes manual control; suppresses auto-fit-on-resize/view-switch
+
+  const zoomWrap = document.getElementById('zoomWrap');
+  const zoomSlider = document.getElementById('zoomSlider');
+  const zoomLabel = document.getElementById('zoomLabel');
+  const appEl = document.getElementById('app');
+
+  function activeZoomableView(){
+    if(networkView.style.display !== 'none') return { svg, w: svgW, h: svgH, wrap: document.getElementById('canvas-wrap') };
+    if(treeView.style.display !== 'none') return { svg: document.getElementById('treeNet'), w: treeDims.w, h: treeDims.h, wrap: document.getElementById('tree-canvas-wrap') };
+    return null; // Gantt — not zoomable here
+  }
+
+  function lodTierFor(pct){
+    if(pct < 30) return '3';
+    if(pct < 50) return '2';
+    if(pct < 75) return '1';
+    return null;
+  }
+
+  function applyZoom(){
+    const view = activeZoomableView();
+    zoomWrap.classList.toggle('hidden', !view);
+    if(!view){ appEl.removeAttribute('data-lod'); return; }
+    zoomPct = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoomPct));
+    const frac = zoomPct / 100;
+    if(view.w && view.h){
+      view.svg.style.width = (view.w * frac) + 'px';
+      view.svg.style.height = (view.h * frac) + 'px';
+    }
+    const lod = lodTierFor(zoomPct);
+    if(lod) appEl.setAttribute('data-lod', lod); else appEl.removeAttribute('data-lod');
+    zoomSlider.value = zoomPct;
+    zoomLabel.textContent = Math.round(zoomPct) + '%';
+  }
+
+  // Fits the current view's full width into the visible canvas — used as
+  // the responsive default (initial load + window resize) whenever the
+  // user hasn't manually overridden zoom. Never upscales past 100% native.
+  function fitZoomToView(){
+    const view = activeZoomableView();
+    if(!view || !view.w) return 100;
+    const availW = view.wrap.clientWidth - 24;
+    if(availW <= 0) return 100;
+    return Math.min(100, Math.max(ZOOM_MIN, Math.floor((availW / view.w) * 100)));
+  }
+
+  zoomSlider.addEventListener('input', () => {
+    userZoomed = true;
+    zoomPct = Number(zoomSlider.value);
+    applyZoom();
+  });
+  document.getElementById('zoomOut').addEventListener('click', () => {
+    userZoomed = true; zoomPct -= 10; applyZoom();
+  });
+  document.getElementById('zoomIn').addEventListener('click', () => {
+    userZoomed = true; zoomPct += 10; applyZoom();
+  });
+  document.getElementById('zoomFit').addEventListener('click', () => {
+    userZoomed = false;
+    zoomPct = fitZoomToView();
+    applyZoom();
+  });
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if(!userZoomed) zoomPct = fitZoomToView();
+      applyZoom();
+    }, 150);
+  });
+
+  /* =======================================================================
+     STATS BAR
+     ======================================================================= */
+  function renderStats(){
+    const total = EPICS.length;
+    const avgPct = Math.round(EPICS.reduce((s,e) => s+e.pct, 0) / total);
+    const criticalCount = EPICS.filter(e => e.critical).length;
+    const blockedCount = EPICS.filter(e => e.blocked).length;
+    const endDate = fmtDate(addDays(PROGRAMME_START, projectEnd));
+
+    const projectCount = new Set(EPICS.map(e => e.project)).size;
+
+    const stats = [
+      { label:'Total epics', val: total },
+      { label:'Projects', val: projectCount },
+      { label:'Overall progress', val: avgPct+'%' },
+      { label:'Critical path', val: projectEnd+'d', cls:'crit' },
+      { label:'On critical path', val: criticalCount+' epics', cls:'crit' },
+      { label:'Blocked', val: blockedCount, cls: blockedCount ? 'warn' : '' },
+      { label:'Projected finish', val: endDate },
+    ];
+    document.getElementById('statsRow').innerHTML = stats.map(s => `
+      <div class="stat ${s.cls||''}">
+        <div class="val">${s.val}</div>
+        <div class="lbl">${s.label}</div>
+      </div>`).join('');
+  }
+
+  const dataNote = document.getElementById('dataNote');
+  if(dataNote){
+    const excludedNote = excludedCount ? ` (${excludedCount} other epic${excludedCount===1?'':'s'} fetched but excluded — missing a 'key epic' or 'programme theme' tag)` : '';
+    const projectList = data.source && data.source.projects ? data.source.projects.join(', ') : Object.keys(PROJECTS).join(', ');
+    dataNote.innerHTML = (data.source
+      ? `Rendering <b>${EPICS.length} epics</b> under <b>${THEME_ITEMS.length} themes</b> across <b>${projectList}</b> from Azure DevOps — <b>${data.source.org}</b>, fetched ${data.source.generatedAt}.`
+      : `Rendering <b>${EPICS.length} epics</b> under <b>${THEME_ITEMS.length} themes</b> across <b>${projectList}</b>.`) + excludedNote;
+  }
+
+  document.getElementById('loadingState')?.remove();
+  document.getElementById('app').style.display = 'flex';
+
+  renderStats();
+  renderGantt();
+  renderTree();
+  applyState();
+
+  zoomPct = fitZoomToView();
+  applyZoom();
+}
+
+</script>
+</body>
+</html>
