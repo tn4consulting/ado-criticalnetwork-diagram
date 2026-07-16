@@ -572,6 +572,15 @@ function init(data){
     applyState();
   });
 
+  const summaryToggle = document.getElementById('summaryToggle');
+  summaryToggle.addEventListener('click', () => {
+    const appEl = document.getElementById('app');
+    const collapsed = appEl.classList.toggle('summary-collapsed');
+    summaryToggle.setAttribute('aria-expanded', String(!collapsed));
+    if(!userZoomed) zoomPct = fitZoomToView();
+    applyZoom();
+  });
+
   function applyState(){
     // If a Strategic Theme is selected (Tree view only — themes aren't part
     // of the dependsOn graph), fall back to its epic subtree so switching to
