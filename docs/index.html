@@ -1541,15 +1541,22 @@ function init(data){
     zoomLabel.textContent = Math.round(zoomPct) + '%';
   }
 
-  // Fits the current view's full width into the visible canvas — used as
-  // the responsive default (initial load + window resize) whenever the
-  // user hasn't manually overridden zoom. Never upscales past 100% native.
+  // Fits the current view's full width AND height into the visible canvas —
+  // used as the responsive default (initial load + window resize) whenever
+  // the user hasn't manually overridden zoom. Never upscales past 100%
+  // native. Fitting height too matters for the Tree view: it can fan out
+  // wide but also run deep, and fitting width alone left tall trees taller
+  // than the viewport, so scrolling straight down from a shallow branch
+  // landed on blank canvas instead of the deeper siblings laid out to the
+  // side.
   function fitZoomToView(){
     const view = activeZoomableView();
-    if(!view || !view.w) return 100;
+    if(!view || !view.w || !view.h) return 100;
     const availW = view.wrap.clientWidth - 24;
-    if(availW <= 0) return 100;
-    return Math.min(100, Math.max(ZOOM_MIN, Math.floor((availW / view.w) * 100)));
+    const availH = view.wrap.clientHeight - 24;
+    if(availW <= 0 || availH <= 0) return 100;
+    const fitPct = Math.floor(Math.min(availW / view.w, availH / view.h) * 100);
+    return Math.min(100, Math.max(ZOOM_MIN, fitPct));
   }
 
   zoomSlider.addEventListener('input', () => {
